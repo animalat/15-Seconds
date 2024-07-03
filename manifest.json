@@ -1,11 +1,12 @@
 {
+    "manifest_version": 3,
     "name": "15 Seconds",
-    "version": "0.1.0",
+    "version": "1.0",
     "description": "A program to improve productivity by delaying the instant gratification of social media.",
     "permissions": [
         "activeTab",
         "storage",
-        "tab"
+        "tabs"
     ],
     "background": {
         "service_worker": "background.js"
@@ -20,9 +21,10 @@
             ]
         }
     ],
-    "web_accessible_resources": [
-        "assets/icon.png"
-    ],
+    "web_accessible_resources": [{ 
+        "resources": ["/assets/icon.png"],
+        "matches": ["<all_urls>"]
+    }],
     "action": {
         "default_icon": {
             "16": "assets/icon.png",
@@ -31,6 +33,5 @@
         },
         "default_title": "15 Seconds",
         "default_popup": "popup.html"
-    },
-    "manifest_version": 3
+    }
 }
