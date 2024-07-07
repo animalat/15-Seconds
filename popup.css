@@ -1,23 +1,19 @@
 .container {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: "Lato", sans-serif;
+    width: 200px;
+    height: 400px;
   }
   
   .title {
-    font-size: 24px;
+    font-size: 15px;
     margin-bottom: 20px;
+    text-align: center;
   }
   
-  .controls button {
-    margin-right: 10px;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .controls button:hover {
-    background-color: #0056b3;
+  .blocked-websites {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
   }

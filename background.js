@@ -1,21 +1,10 @@
-// Initialize an empty Set for blockedWebsites
-let blockedWebsites = new Set();
+import { getBlockedWebsites } from './storageManager.js';
+import { isWebsiteBlocked } from './utils.js';
+import { loadBlockedWebsites } from './storageManager.js';
 
-// Load blockedWebsites from local storage and convert it to a Set
-chrome.storage.local.get('blockedWebsites', (result) => {
-    if (result.blockedWebsites) {
-        blockedWebsites = new Set(result.blockedWebsites);
-    } else {
-        // If not set in local storage, initialize it as an empty array
-        chrome.storage.local.set({blockedWebsites: ['www.youtube.com', 'www.facebook.com']});
-    }
-});
+export const websitesLoadedPromise = loadBlockedWebsites();
 
-const isWebsiteBlocked = (domain) => {
-    return blockedWebsites.has(domain);
-};
-
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status !== 'complete') {
         return;
     }
@@ -26,12 +15,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
-    
-    if (isWebsiteBlocked(domain)) {
-        chrome.tabs.sendMessage(tabId, {
-            message: "BLOCK"
-        }).catch((error) => {
-            console.error(`[15s] Error: ${error}`);
-        });
+
+    await websitesLoadedPromise;
+    const blockedWebsites = getBlockedWebsites();
+
+    try {
+        const isBlocked = isWebsiteBlocked(domain, blockedWebsites);
+        if (isBlocked) {
+            chrome.tabs.sendMessage(tabId, {
+                message: "BLOCK"
+            })
+        }
+    } catch (error) {
+        console.error(`[15s] Error: ${error}`);
     }
 });
