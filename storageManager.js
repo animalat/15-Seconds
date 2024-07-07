@@ -1,28 +1,6 @@
+import { chromeStorageGet, chromeStorageSet } from './utils.js';
+
 let blockedWebsites = new Set();
-
-const chromeStorageGet = (key) => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(key, (result) => {
-            if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError));
-            } else {
-                resolve(result);
-            }
-        });
-    });
-};
-
-const chromeStorageSet = (data) => {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.set(data, () => {
-            if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError));
-            } else {
-                resolve();
-            }
-        });
-    });
-};
 
 const loadBlockedWebsites = async () => {
     try {

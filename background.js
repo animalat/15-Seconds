@@ -15,7 +15,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
-    chrome.storage.local.clear();
+    chrome.storage.local.clear();           // ---------remove---------
     await websitesLoadedPromise;
     const blockedWebsites = getBlockedWebsites();
 
