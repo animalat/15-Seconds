@@ -5,9 +5,18 @@ const blockedWebsitesSection = document.getElementById('blocked-websites');
 
 const showWebsites = (websites) => {
     websites.forEach((website) => {
-        const websiteElement = document.createElement('div');
+        const websiteEntry = document.createElement('div');
+        websiteEntry.classList.add('website-entry'); // Add a class for styling
+
+        const websiteElement = document.createElement('span'); // Use span for the website name
         websiteElement.textContent = website;
-        blockedWebsitesSection.appendChild(websiteElement);
+        websiteEntry.appendChild(websiteElement);
+
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'x';
+        websiteEntry.appendChild(removeButton);
+
+        blockedWebsitesSection.appendChild(websiteEntry);
     });
 }
 
