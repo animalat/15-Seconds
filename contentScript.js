@@ -1,12 +1,11 @@
 (() => {
-    
     chrome.runtime.onMessage.addListener((obj, sender, response) => {
-        const { message, domain } = obj;
+        message = obj.message;
 
         if (message === "BLOCK") {
-            console.log(`Blocking ${domain}`);
+            console.log('[15s] Blocking website');
         } else {
-            console.log(`Received unknown message: ${message}`);
+            console.error(`[15s] Received unknown message: ${message}`);
         }
     });
 })();

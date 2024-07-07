@@ -1,32 +1,37 @@
-const blockedWebsites = ['www.youtube.com', 'www.facebook.com'];
+// Initialize an empty Set for blockedWebsites
+let blockedWebsites = new Set();
+
+// Load blockedWebsites from local storage and convert it to a Set
+chrome.storage.local.get('blockedWebsites', (result) => {
+    if (result.blockedWebsites) {
+        blockedWebsites = new Set(result.blockedWebsites);
+    } else {
+        // If not set in local storage, initialize it as an empty array
+        chrome.storage.local.set({blockedWebsites: ['www.youtube.com', 'www.facebook.com']});
+    }
+});
 
 const isWebsiteBlocked = (domain) => {
-    console.log(domain);
-    console.log(blockedWebsites.includes(domain));
-    return blockedWebsites.includes(domain);
+    return blockedWebsites.has(domain);
 };
 
-// Go through list of websites in preferences, if current tab is one of them, send a message to content script
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status !== 'complete') {
         return;
     }
-    console.log("1");
+    
     if (!tab.url) {
         return;
     }
-    console.log("2");
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
-
+    
     if (isWebsiteBlocked(domain)) {
-        console.log("3");
         chrome.tabs.sendMessage(tabId, {
-            message: "BLOCK",
-            domain: domain
+            message: "BLOCK"
         }).catch((error) => {
-            console.error(`Could not send message: ${error}`);
+            console.error(`[15s] Error: ${error}`);
         });
     }
 });
