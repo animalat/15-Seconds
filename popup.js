@@ -1,10 +1,11 @@
-import { websitesLoadedPromise } from './background.js';
+import { websitesLoadedPromise, awaitWebsitesLoaded } from './background.js';
 import { getBlockedWebsites } from './storageManager.js';
-import { removeWebsite } from './utils.js'
+import { addWebsite, removeWebsite } from './utils.js'
 
 let blockedWebsites = new Set();
+const blockedWebsitesSection = document.getElementById('blocked-websites');
 
-const elementClear = (parentElement) => {
+const clearElement = (parentElement) => {
     if (!parentElement) {
         return;
     }
@@ -15,40 +16,92 @@ const elementClear = (parentElement) => {
     parentElement.remove();
 }
 
+const addWebsiteItem = async () => {
+    console.log('[15s] Adding website');
+    chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+        const currentTab = tabs[0];
+        if (!currentTab || !currentTab.url) {
+            return;
+        }
+    
+        const url = new URL(currentTab.url);
+        const domain = url.hostname;
+
+        if (blockedWebsites.has(domain)) {
+            return;
+        }
+
+        awaitWebsitesLoaded();
+        const result = addWebsite(domain, blockedWebsites);
+        console.log('[15s] Result:', result)
+        if (result) {
+            displayBlockedWebsite(domain);
+        }
+    });
+};
+
 const removeWebsiteItem = async (websiteEntry, website) => {
-    elementClear(websiteEntry);
+    console.log('[15s] Removing website');
+    clearElement(websiteEntry);
     websiteEntry.remove();
 
     if (!website || !blockedWebsites || !blockedWebsites.has(website)) {
         return;
     }
-    await websitesLoadedPromise;
+
+    awaitWebsitesLoaded();
     removeWebsite(website, blockedWebsites);
 };
 
-const showWebsites = (websites) => {
-    const blockedWebsitesSection = document.getElementById('blocked-websites');
-
-    websites.forEach((website) => {
-        const websiteEntry = document.createElement('div');
-        websiteEntry.classList.add('website-entry'); // Add a class for styling
-
-        const websiteElement = document.createElement('span'); // Use span for the website name
-        websiteElement.textContent = website;
-        websiteEntry.appendChild(websiteElement);
-
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'x';
-        removeButton.addEventListener('click', async () => {
-            await removeWebsiteItem(websiteEntry, website);
-        });
-        websiteEntry.appendChild(removeButton);
-
-        blockedWebsitesSection.appendChild(websiteEntry);
-    });
+const getWebsiteEntry = (website) => {
+    return `
+        <div class="website-entry">
+            <span>${website}</span>
+            <button class="remove-btn">x</button>
+        </div>
+    `;
 };
 
-websitesLoadedPromise.then(() => {
-    blockedWebsites = getBlockedWebsites();
-    showWebsites(blockedWebsites);
+const displayBlockedWebsite = (website) => {
+    const websiteEntryHTML = getWebsiteEntry(website);
+
+    const template = document.createElement('template');
+    template.innerHTML = websiteEntryHTML.trim();
+
+    const websiteEntry = template.content.firstChild;
+
+    blockedWebsitesSection.appendChild(websiteEntry);
+
+    const removeButton = websiteEntry.querySelector('.remove-btn');
+    removeButton.addEventListener('click', async () => {
+        const website = removeButton.closest('.website-entry').querySelector('span').textContent;
+        try {
+            await removeWebsiteItem(websiteEntry, website);
+        } catch (error) {
+            console.error(`[15s] Could not remove website: ${error}`);
+        }
+    });
+}
+
+const displayBlockedWebsites = (websites) => {
+    blockedWebsitesSection.innerHTML = '';
+
+    websites.forEach((website) => {
+        displayBlockedWebsite(website);
+    });
+};
+document.addEventListener('DOMContentLoaded', () => {
+    websitesLoadedPromise.then(() => {
+        blockedWebsites = getBlockedWebsites();
+        displayBlockedWebsites(blockedWebsites);
+    });
+
+    const addButton = document.getElementById('add-button');
+    addButton.addEventListener('click', async () => {
+        try {
+            await addWebsiteItem();
+        } catch (error) {
+            console.error(`[15s] Could not add website: ${error}`);
+        }
+    });
 });

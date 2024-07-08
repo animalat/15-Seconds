@@ -2,7 +2,19 @@ import { getBlockedWebsites } from './storageManager.js';
 import { isWebsiteBlocked } from './utils.js';
 import { loadBlockedWebsites } from './storageManager.js';
 
-export const websitesLoadedPromise = loadBlockedWebsites();
+export let websitesLoadedPromise = loadBlockedWebsites();
+
+export const updateWebsitesLoadedPromise = () => {
+    websitesLoadedPromise = loadBlockedWebsites();
+};
+
+export const awaitWebsitesLoaded = async () => {
+    try {
+        await websitesLoadedPromise;
+    } catch (error) {
+        console.error(`[15s] Error loading websites: ${error}`);
+    }
+};
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status !== 'complete') {
@@ -15,18 +27,21 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
-    chrome.storage.local.clear();           // ---------remove---------
-    await websitesLoadedPromise;
-    const blockedWebsites = getBlockedWebsites();
 
+    // chrome.storage.local.clear();           // ---------remove---------
+
+    awaitWebsitesLoaded();
+    const blockedWebsites = getBlockedWebsites();
+    console.log('[15s] Blocked websites:', blockedWebsites)
     try {
         const isBlocked = isWebsiteBlocked(domain, blockedWebsites);
         if (isBlocked) {
+            console.log('[15s] Tab updated');
             chrome.tabs.sendMessage(tabId, {
                 message: "BLOCK"
-            })
+            });
         }
     } catch (error) {
-        console.error(`[15s] Error: ${error}`);
+        console.error(`[15s] Could not block: ${error}`);
     }
 });

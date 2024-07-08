@@ -53,3 +53,20 @@
   .blocked-websites > div > button:hover {
     background-color: #C4112F;
   }
+
+  #add-button {
+    position: fixed; /* Use absolute if you want it to move with the page */
+    bottom: 20px;
+    right: 33.5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#add-button:hover {
+    background-color: #45a049;
+}

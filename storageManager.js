@@ -10,13 +10,12 @@ const loadBlockedWebsites = async () => {
             blockedWebsites = new Set(result.blockedWebsites);
         } else {
             // If not set in local storage, initialize it with default values
-            await chromeStorageSet({blockedWebsites: ['www.youtube.com', 'www.facebook.com', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']});
-            blockedWebsites = new Set(['www.youtube.com', 'www.facebook.com', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']);
+            await chromeStorageSet({blockedWebsites: []});
+            blockedWebsites = new Set([]);
         }
     } catch (error) {
         console.error(`[15s] Error loading blocked websites: ${error}`);
     }
-    
 };
 
 const getBlockedWebsites = () => blockedWebsites;
