@@ -20,6 +20,8 @@
     margin-right: -25px;
     overflow: hidden;
     position: relative;
+    max-height: 275px;
+    overflow-y: auto;
   }
 
   .blocked-websites > div {
@@ -55,7 +57,7 @@
   }
 
   #add-button {
-    position: fixed; /* Use absolute if you want it to move with the page */
+    position: fixed;
     bottom: 20px;
     right: 33.5px;
     padding: 5px 10px;
