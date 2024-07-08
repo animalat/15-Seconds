@@ -16,6 +16,8 @@ export const awaitWebsitesLoaded = async () => {
     }
 };
 
+let previousWebsite = '';
+
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status !== 'complete') {
         return;
@@ -27,6 +29,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
+
+    if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href) {
+        chrome.tabs.reload(tabId, {}, () => {
+            console.log('[15s] Tab reloaded.');
+        });
+    }
+    previousWebsite = urlObj.href;
 
     awaitWebsitesLoaded();
     const blockedWebsites = getBlockedWebsites();
