@@ -1,12 +1,14 @@
 (() => {
-    chrome.runtime.onMessage.addListener((obj, sender, response) => {
-        const message = obj.message;
+  chrome.runtime.onMessage.addListener((obj, sender, response) => {
+    const message = obj.message;
 
-        if (message === "BLOCK") {
-            console.log('[15s] Blocking website');
+    if (message === "BLOCK") {
+      console.log("[15s] Blocking website");
 
-            const overlay = document.createElement('div');
-            overlay.setAttribute('style', `
+      const overlay = document.createElement("div");
+      overlay.setAttribute(
+        "style",
+        `
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -18,16 +20,20 @@
                 justify-content: center;
                 align-items: center;
                 font-size: 24px;
-            `);
-            document.body.appendChild(overlay);
+            `
+      );
+      document.body.appendChild(overlay);
 
-            const fontLink = document.createElement('link');
-            fontLink.href = 'https://fonts.googleapis.com/css?family=Lato&display=swap';
-            fontLink.rel = 'stylesheet';
-            document.head.appendChild(fontLink);
+      const fontLink = document.createElement("link");
+      fontLink.href =
+        "https://fonts.googleapis.com/css?family=Lato&display=swap";
+      fontLink.rel = "stylesheet";
+      document.head.appendChild(fontLink);
 
-            const countdownBox = document.createElement('div');
-            countdownBox.setAttribute('style', `
+      const countdownBox = document.createElement("div");
+      countdownBox.setAttribute(
+        "style",
+        `
                 position: fixed;
                 top: 50%;
                 left: 50%;
@@ -43,81 +49,101 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-            `);
-            countdownBox.id = 'countdown-box';
-            document.body.appendChild(countdownBox);
-            
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden'; 
-            // Pause video(s) on the page
-            document.querySelectorAll('.html5-main-video').forEach(video => video.pause());
+            `
+      );
+      countdownBox.id = "countdown-box";
+      document.body.appendChild(countdownBox);
 
-            const disableKeyInputs = (event) => {
-                const videoControlKeys = [' ', 'Spacebar', 'Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'j', 'k', 'l', 'f'];
-                for (let i = 0; i <= 9; i++) {
-                    videoControlKeys.push(`${i}`);
-                }
-            
-                if (videoControlKeys.includes(event.key)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-            };
-            document.addEventListener('keydown', disableKeyInputs, true);
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      // Pause video(s) on the page
+      document
+        .querySelectorAll(".html5-main-video")
+        .forEach((video) => video.pause());
 
-            // Fix YouTube spacebar still working (fake textbox! so sneaky)
-            const hiddenInput = document.createElement('input');
-            hiddenInput.style.position = 'absolute';
-            hiddenInput.style.top = '0';
-            hiddenInput.style.left = '0';
-            hiddenInput.style.opacity = '0';
-            hiddenInput.style.height = '0';
-            hiddenInput.style.width = '0';
-            hiddenInput.style.width = '100px';
-            hiddenInput.style.height = '20px';
-            hiddenInput.style.zIndex = '10000';
-            hiddenInput.setAttribute('tabindex', '-1');         // prevent tab
-            document.body.appendChild(hiddenInput);
-            hiddenInput.focus();
-
-            const keepFocusOnHiddenInput = (event) => {
-                if (event.target !== hiddenInput) {
-                    hiddenInput.focus();
-                }
-            };
-
-            document.addEventListener('focus', keepFocusOnHiddenInput, true);
-
-            const disableMouse = (event) => {
-                if (event.target !== hiddenInput) {
-                    event.preventDefault();
-                    hiddenInput.focus();
-                }
-            };
-
-            document.addEventListener('mousedown', disableMouse, true);
-
-            let timeLeft = 15;              // seconds
-            countdownBox.textContent = `${timeLeft}`;
-
-            const countdown = setInterval(() => {
-                timeLeft--;
-                countdownBox.textContent = `${timeLeft}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    document.body.removeChild(countdownBox);
-                    document.body.removeChild(overlay);
-                    document.body.style.overflow = '';
-                    document.documentElement.style.overflow = '';
-                    document.removeEventListener('keydown', disableKeyInputs, true);
-                    document.querySelectorAll('.html5-main-video').forEach(video => video.play());
-                    document.removeEventListener('focus', keepFocusOnHiddenInput, true);
-                    hiddenInput.blur();
-                    document.body.removeChild(hiddenInput);
-                    document.removeEventListener('mousedown', disableMouse, true);
-                }
-            }, 1000);
+      const disableKeyInputs = (event) => {
+        const videoControlKeys = [
+          " ",
+          "Spacebar",
+          "Space",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowUp",
+          "ArrowDown",
+          "j",
+          "k",
+          "l",
+          "f",
+        ];
+        for (let i = 0; i <= 9; i++) {
+          videoControlKeys.push(`${i}`);
         }
-    });
+
+        if (videoControlKeys.includes(event.key)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      };
+      document.addEventListener("keydown", disableKeyInputs, true);
+
+      // Fix YouTube spacebar still working (fake textbox! so sneaky)
+      const hiddenInput = document.createElement("input");
+      hiddenInput.style.position = "absolute";
+      hiddenInput.style.top = "0";
+      hiddenInput.style.left = "0";
+      hiddenInput.style.opacity = "0";
+      hiddenInput.style.height = "0";
+      hiddenInput.style.width = "0";
+      hiddenInput.style.width = "100px";
+      hiddenInput.style.height = "20px";
+      hiddenInput.style.zIndex = "10000";
+      hiddenInput.setAttribute("tabindex", "-1"); // prevent tab
+      document.body.appendChild(hiddenInput);
+      hiddenInput.focus();
+
+      const keepFocusOnHiddenInput = (event) => {
+        if (event.target !== hiddenInput) {
+          hiddenInput.focus();
+        }
+      };
+
+      document.addEventListener("focus", keepFocusOnHiddenInput, true);
+
+      const disableMouse = (event) => {
+        if (event.target !== hiddenInput) {
+          event.preventDefault();
+          hiddenInput.focus();
+        }
+      };
+
+      document.addEventListener("mousedown", disableMouse, true);
+
+      let timeLeft = 15; // seconds
+      countdownBox.textContent = `${timeLeft}`;
+
+      const countdown = setInterval(() => {
+        timeLeft--;
+        countdownBox.textContent = `${timeLeft}`;
+        document
+          .querySelectorAll(".html5-main-video")
+          .forEach((video) => video.pause());
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          document.body.removeChild(countdownBox);
+          document.body.removeChild(overlay);
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          document.removeEventListener("keydown", disableKeyInputs, true);
+          document
+            .querySelectorAll(".html5-main-video")
+            .forEach((video) => video.play());
+          document.removeEventListener("focus", keepFocusOnHiddenInput, true);
+          hiddenInput.blur();
+          document.body.removeChild(hiddenInput);
+          document.removeEventListener("mousedown", disableMouse, true);
+        }
+      }, 1000);
+    }
+  });
 })();
