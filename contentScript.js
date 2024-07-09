@@ -52,6 +52,52 @@
             // Pause video(s) on the page
             document.querySelectorAll('.html5-main-video').forEach(video => video.pause());
 
+            const disableKeyInputs = (event) => {
+                // List of key codes for video control keys: space (32), arrow keys (37-40), and number keys (48-57, 96-105)
+                const videoControlKeys = [' ', 'Spacebar', 'Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'j', 'k', 'l', 'f'];
+                for (let i = 0; i <= 9; i++) {
+                    videoControlKeys.push(`${i}`);
+                }
+            
+                if (videoControlKeys.includes(event.key)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            };
+            document.addEventListener('keydown', disableKeyInputs, true);
+
+            // Fix YouTube spacebar still working (fake textbox! so sneaky)
+            const hiddenInput = document.createElement('input');
+            hiddenInput.style.position = 'absolute';
+            hiddenInput.style.top = '0';
+            hiddenInput.style.left = '0';
+            hiddenInput.style.opacity = '0';
+            hiddenInput.style.height = '0';
+            hiddenInput.style.width = '0';
+            hiddenInput.style.width = '100px';
+            hiddenInput.style.height = '20px';
+            hiddenInput.style.zIndex = '10000';
+            hiddenInput.setAttribute('tabindex', '-1');         // prevent tab
+            document.body.appendChild(hiddenInput);
+            hiddenInput.focus();
+
+            const keepFocusOnHiddenInput = (event) => {
+                if (event.target !== hiddenInput) {
+                    hiddenInput.focus();
+                }
+            };
+
+            document.addEventListener('focus', keepFocusOnHiddenInput, true);
+
+            const disableMouse = (event) => {
+                if (event.target !== hiddenInput) {
+                    event.preventDefault();
+                    hiddenInput.focus();
+                }
+            };
+
+            document.addEventListener('mousedown', disableMouse, true);
+
             let timeLeft = 15;              // seconds
             countdownBox.textContent = `${timeLeft}`;
 
@@ -65,7 +111,12 @@
                     document.body.removeChild(overlay);
                     document.body.style.overflow = '';
                     document.documentElement.style.overflow = '';
+                    document.removeEventListener('keydown', disableKeyInputs, true);
                     document.querySelectorAll('.html5-main-video').forEach(video => video.play());
+                    document.removeEventListener('focus', keepFocusOnHiddenInput, true);
+                    hiddenInput.blur();
+                    document.body.removeChild(hiddenInput);
+                    document.removeEventListener('mousedown', disableMouse, true);
                 }
             }, 1000);
         }
