@@ -32,13 +32,13 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                height: 20px;
-                width: 20px;
+                height: 6vh;
+                width: 6vh;
                 z-index: 10000;
                 background-color: white;
                 padding: 20px;
                 border: 2px solid #C4112F;
-                font-size: 24px;
+                font-size: 5vh;
                 font-family: 'Lato', sans-serif;
                 display: flex;
                 justify-content: center;
@@ -53,7 +53,6 @@
             document.querySelectorAll('.html5-main-video').forEach(video => video.pause());
 
             const disableKeyInputs = (event) => {
-                // List of key codes for video control keys: space (32), arrow keys (37-40), and number keys (48-57, 96-105)
                 const videoControlKeys = [' ', 'Spacebar', 'Space', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'j', 'k', 'l', 'f'];
                 for (let i = 0; i <= 9; i++) {
                     videoControlKeys.push(`${i}`);
