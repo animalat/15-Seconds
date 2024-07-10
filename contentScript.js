@@ -75,9 +75,6 @@
           "l",
           "f",
         ];
-        for (let i = 0; i <= 9; i++) {
-          videoControlKeys.push(`${i}`);
-        }
 
         if (videoControlKeys.includes(event.key)) {
           event.preventDefault();
