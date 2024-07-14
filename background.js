@@ -29,8 +29,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     
     const urlObj = new URL(tab.url);
     const domain = urlObj.hostname;
+    const queryParams = new URLSearchParams(urlObj.search);
+    const isInPlaylist = queryParams.has('list');
 
-    if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href) {
+    if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href && !isInPlaylist) {
+
         chrome.tabs.reload(tabId, {}, () => {
             console.log('[15s] Tab reloaded.');
         });
