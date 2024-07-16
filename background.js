@@ -37,15 +37,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     console.log('[15s] Blocked websites:', blockedWebsites)
     try {
         const isBlocked = isWebsiteBlocked(domain, blockedWebsites);
-        if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href && !isInPlaylist) {
-            chrome.tabs.reload(tabId, {}, () => {
-                console.log('[15s] Tab reloaded.');
-            });
-        }
-        
-        previousWebsite = urlObj.href;
         if (isBlocked) {
             console.log('[15s] Tab updated');
+            if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href && !isInPlaylist) {
+                chrome.tabs.reload(tabId, {}, () => {
+                    console.log('[15s] Tab reloaded.');
+                });
+            }
+            previousWebsite = urlObj.href;
             chrome.tabs.sendMessage(tabId, {
                 message: "BLOCK"
             });
