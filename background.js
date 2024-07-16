@@ -1,54 +1,53 @@
-import { getBlockedWebsites } from './storageManager.js';
-import { isWebsiteBlocked } from './utils.js';
-import { loadBlockedWebsites } from './storageManager.js';
+import { getBlockedWebsites } from "./storageManager.js";
+import { isWebsiteBlocked } from "./utils.js";
+import { loadBlockedWebsites } from "./storageManager.js";
 
 export let websitesLoadedPromise = loadBlockedWebsites();
 
 export const updateWebsitesLoadedPromise = () => {
-    websitesLoadedPromise = loadBlockedWebsites();
+  websitesLoadedPromise = loadBlockedWebsites();
 };
 
 export const awaitWebsitesLoaded = async () => {
-    try {
-        await websitesLoadedPromise;
-    } catch (error) {
-        console.error(`[15s] Error loading websites: ${error}`);
-    }
+  try {
+    await websitesLoadedPromise;
+  } catch (error) {
+    console.error(`[15s] Error loading websites: ${error}`);
+  }
 };
 
-let previousWebsite = '';
+let previousWebsite = "";
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (changeInfo.status !== 'complete') {
-        return;
-    }
-    
-    if (!tab.url) {
-        return;
-    }
-    
-    const urlObj = new URL(tab.url);
-    const domain = urlObj.hostname;
+  if (changeInfo.status !== "complete") {
+    return;
+  }
 
-    if (domain === 'www.youtube.com' && previousWebsite !== urlObj.href) {
+  if (!tab.url) {
+    return;
+  }
+
+  const urlObj = new URL(tab.url);
+  const domain = urlObj.hostname;
+  previousWebsite = urlObj.href;
+
+  awaitWebsitesLoaded();
+  const blockedWebsites = getBlockedWebsites();
+  console.log("[15s] Blocked websites:", blockedWebsites);
+  try {
+    const isBlocked = isWebsiteBlocked(domain, blockedWebsites);
+    if (isBlocked) {
+      console.log("[15s] Tab updated");
+      if (domain === "www.youtube.com" && previousWebsite !== urlObj.href) {
         chrome.tabs.reload(tabId, {}, () => {
-            console.log('[15s] Tab reloaded.');
+          console.log("[15s] Tab reloaded.");
         });
+      }
+      chrome.tabs.sendMessage(tabId, {
+        message: "BLOCK",
+      });
     }
-    previousWebsite = urlObj.href;
-
-    awaitWebsitesLoaded();
-    const blockedWebsites = getBlockedWebsites();
-    console.log('[15s] Blocked websites:', blockedWebsites)
-    try {
-        const isBlocked = isWebsiteBlocked(domain, blockedWebsites);
-        if (isBlocked) {
-            console.log('[15s] Tab updated');
-            chrome.tabs.sendMessage(tabId, {
-                message: "BLOCK"
-            });
-        }
-    } catch (error) {
-        console.error(`[15s] Could not block: ${error}`);
-    }
+  } catch (error) {
+    console.error(`[15s] Could not block: ${error}`);
+  }
 });
