@@ -83,7 +83,7 @@
       };
       document.addEventListener("keydown", disableKeyInputs, true);
 
-      // Fix YouTube spacebar still working (fake textbox! so sneaky)
+      // Fix YouTube spacebar still working (fake textbox)
       const hiddenInput = document.createElement("input");
       hiddenInput.style.position = "absolute";
       hiddenInput.style.top = "0";
