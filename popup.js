@@ -81,7 +81,7 @@ const displayBlockedWebsite = (website) => {
             console.error(`[15s] Could not remove website: ${error}`);
         }
     });
-}
+};
 
 const displayBlockedWebsites = (websites) => {
     blockedWebsitesSection.innerHTML = '';
