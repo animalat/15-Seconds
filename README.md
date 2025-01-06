@@ -1,7 +1,7 @@
 <h3 align="left">15 Seconds:</h3>
 <p align="left"><BR CLEAR=ALL />
-  <img src="https://drive.google.com/uc?export=view&id=1VCdccylD7ES5dWYDSixCRoDlUYLRcrYX" alt="Pomodoro Timer Image" width="240" height=auto border="10" /><BR CLEAR=ALL />
-  <img src="https://drive.google.com/uc?export=view&id=1QV1i7__BveeXExRPTlV6DMYss9bL_G7F" alt="Pomodoro Timer Image" width="240" height=auto border="10" /><BR CLEAR=ALL />
+  <img src="https://drive.google.com/uc?export=view&id=1VCdccylD7ES5dWYDSixCRoDlUYLRcrYX" alt="15 Seconds Preview1" width="240" height=auto border="10" /><BR CLEAR=ALL />
+  <img src="https://drive.google.com/uc?export=view&id=1QV1i7__BveeXExRPTlV6DMYss9bL_G7F" alt="15 Seconds Preview2" width="240" height=auto border="10" /><BR CLEAR=ALL />
 A program that improves productivity by delaying the instant gratification of social media.<BR CLEAR=ALL /> <BR CLEAR=ALL />
 To install: <BR CLEAR=ALL />
 1. Chrome -> Open extensions (menu) <BR CLEAR=ALL />
