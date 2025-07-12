@@ -7,10 +7,10 @@
 
 ---
 
-**15 Seconds** is a Chrome extension designed to boost productivity by introducing a brief delay before allowing access to distracting social media sites. This helps users pause and reconsider, reducing impulsive browsing and increasing focus.
+**15 Seconds** is a Chrome extension designed to boost productivity by adding a small delay before allowing access to chosen distracting social media sites. This helps users pause and reconsider, reducing impulsive browsing and increasing focus.
 
 ### Features
-- ⏳ Introduces a customizable delay before social media pages load
+- ⏳ Adds a 15-second delay when social media pages load
 - 🚫 Helps break the habit of instant gratification from social media
 
 ---
